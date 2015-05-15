@@ -55,10 +55,14 @@ var HomeWSN = (function() {
 		var url;
 
 		if (Debugging === true) {
-			url = '';
+//			url = '';
+			url = document.location.href;
+			url = url.slice(0, url.lastIndexOf('/') + 1);
 		}
-		else
-			url = document.location.origin + '/';
+		else {
+			url = document.location.href;
+			url = url.slice(0, url.lastIndexOf('/') + 1);
+		}
 
 		return url;
 	}
