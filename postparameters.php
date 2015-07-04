@@ -11,31 +11,36 @@ function httpStatus($httpStatusCode, $httpStatusMsg)
 		header($protocol .' ' .$httpStatusCode .' ' .$httpStatusMsg);
 	}
 }
+// unlike empty($var), if $var=0, isempty($var) returns FALSE
+function isempty($var)
+{
+    return (!isset($var) || trim($var) === '');
+}
 
 // parameters from POST
 $name = $_POST['name'];
-if (!$name)
-	return httpStatus(400, 'name parameter must be non-empty');
+if (empty($name))
+	return httpStatus(400, 'Error: name parameter must be non-empty');
 if ($name == 'id' || $name == 'param' || $name == 'unit' || $name == 'data_type')
-	return httpStatus(400, 'this name parameter is forbidden');
+	return httpStatus(400, 'Error: this name parameter is forbidden');
 $value = $_POST['value'];
-if (!$value && ($name == 'icon_type' || $name == 'value_0' || $name == 'value_1' || $name == 'type'))
-	return httpStatus(400, 'value parameter must be non-empty');
+if (isempty($value) && ($name == 'icon_type' || $name == 'value_0' || $name == 'value_1' || $name == 'type'))
+	return httpStatus(400, 'Error: value parameter must be non-empty');
 $pk = $_POST['pk'];
-if (!$pk)
-	return httpStatus(400, 'pk parameter must be non-empty');
+if (empty($pk))
+	return httpStatus(400, 'Error: pk parameter must be non-empty');
 $ids = explode("-", $pk);
 $id = $ids[0];
 $param = $ids[1];
-if (!$id || !$param)
-	return httpStatus(400, 'pk parameter is invalid');
+if (isempty($id) || isempty($param))
+	return httpStatus(400, 'Error: pk parameter is invalid');
 
 
 // connect to the database
 include('mysql.inc');
 $link = mysqli_connect($host, $user, $pass, $db);
 if (!$link)
-	return httpStatus(400, 'Error: ' .mysqli_error($link));
+	return httpStatus(400, 'MySQL error: ' .mysqli_error($link));
 
 $sql = "
 UPDATE `parameters`
@@ -45,7 +50,7 @@ WHERE `parameters`.`id`=$id AND `parameters`.`param`=$param
 
 $result = mysqli_query($link, $sql);
 if (!$result)
-	return httpStatus(400, 'Error: ' .mysqli_error($link));
+	return httpStatus(400, 'MySQL error: ' .mysqli_error($link));
 
 httpStatus(200, 'Ok');
 ?>
