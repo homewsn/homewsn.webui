@@ -4,10 +4,10 @@ include('mysql.inc');
 $link = mysqli_connect($host, $user, $pass, $db) or die('Error ' .mysqli_error($link));
 
 $sql = "
-SELECT `parameters`.`type`
-FROM `parameters`, `actuators`
-WHERE (`parameters`.`type`!= '' AND `parameters`.`id` = `actuators`.`id`)
-GROUP BY `parameters`.`type` ASC
+SELECT `actuators_parameters`.`type`
+FROM `actuators_parameters`, `actuators`
+WHERE (`actuators_parameters`.`type`!= '' AND `actuators_parameters`.`id` = `actuators`.`id`)
+GROUP BY `actuators_parameters`.`type` ASC
 ";
 
 $result = mysqli_query($link, $sql) or die('Error ' .mysqli_error($link));

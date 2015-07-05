@@ -8,18 +8,18 @@ include('mysql.inc');
 $link = mysqli_connect($host, $user, $pass, $db) or die('Error ' .mysqli_error($link));
 
 $sql = "
-SELECT `parameters`.`id`, `parameters`.`param`, `parameters`.`unit`, `parameters`.`data_type`, `parameters`.`icon_type`, `parameters`.`icon_url_na`, `parameters`.`icon_url_0`, `parameters`.`icon_url_1`, `parameters`.`value_0`, `parameters`.`value_1`, `parameters`.`type`, `parameters`.`comment`, `actuators`.`location`
-FROM `parameters`, `actuators`
-WHERE `parameters`.`id`=`actuators`.`id`
+SELECT `actuators_parameters`.`id`, `actuators_parameters`.`param`, `actuators_parameters`.`unit`, `actuators_parameters`.`data_type`, `actuators_parameters`.`icon_type`, `actuators_parameters`.`icon_url_na`, `actuators_parameters`.`icon_url_0`, `actuators_parameters`.`icon_url_1`, `actuators_parameters`.`value_0`, `actuators_parameters`.`value_1`, `actuators_parameters`.`type`, `actuators_parameters`.`comment`, `actuators`.`location`
+FROM `actuators_parameters`, `actuators`
+WHERE `actuators_parameters`.`id`=`actuators`.`id`
 ";
 
 if ($location && $type)
-	$sql .= "AND `actuators`.`location`='$location' AND `parameters`.`type`= '$type'\n";
+	$sql .= "AND `actuators`.`location`='$location' AND `actuators_parameters`.`type`= '$type'\n";
 elseif ($location && !$type)
 	$sql .= "AND `actuators`.`location`='$location'\n";
 elseif (!$location && $type)
-	$sql .= "AND `parameters`.`type`='$type'\n";
-$sql .= "ORDER BY `parameters`.`id` ASC, `parameters`.`param` ASC";
+	$sql .= "AND `actuators_parameters`.`type`='$type'\n";
+$sql .= "ORDER BY `actuators_parameters`.`id` ASC, `actuators_parameters`.`param` ASC";
 
 $result = mysqli_query($link, $sql) or die('Error ' .mysqli_error($link));
 $rows = array();

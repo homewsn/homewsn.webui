@@ -1,14 +1,19 @@
 <?php
+// unlike empty($var), if $var=0, isempty($var) returns FALSE
+function isempty($var)
+{
+    return (!isset($var) || trim($var) === '');
+}
 
 // parameters from URL
 $id = $_GET['id'];
-if (!$id)
+if (isempty($id))
 	die('id parameter must be non-empty');
 if ($id && !preg_match('/^[0-9]+$/', $id))
 	die("Invalid id parameter: $id");
 
 $param = $_GET['param'];
-if (!$param)
+if (isempty($param))
 	die('param parameter must be non-empty');
 if ($param && !preg_match('/^[0-9]+$/', $param))
 	die("Invalid param parameter: $param");

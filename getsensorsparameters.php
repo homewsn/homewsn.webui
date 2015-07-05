@@ -8,18 +8,18 @@ include('mysql.inc');
 $link = mysqli_connect($host, $user, $pass, $db) or die('Error ' .mysqli_error($link));
 
 $sql = "
-SELECT `parameters`.`id`, `parameters`.`param`, `parameters`.`unit`, `parameters`.`data_type`, `parameters`.`icon_type`, `parameters`.`icon_url_na`, `parameters`.`icon_url_0`, `parameters`.`icon_url_1`, `parameters`.`value_0`, `parameters`.`value_1`, `parameters`.`type`, `parameters`.`comment`, `sensors`.`location`
-FROM `parameters`, `sensors`
-WHERE `parameters`.`id` = `sensors`.`id`
+SELECT `sensors_parameters`.`id`, `sensors_parameters`.`param`, `sensors_parameters`.`unit`, `sensors_parameters`.`data_type`, `sensors_parameters`.`icon_type`, `sensors_parameters`.`icon_url_na`, `sensors_parameters`.`icon_url_0`, `sensors_parameters`.`icon_url_1`, `sensors_parameters`.`value_0`, `sensors_parameters`.`value_1`, `sensors_parameters`.`type`, `sensors_parameters`.`comment`, `sensors`.`location`
+FROM `sensors_parameters`, `sensors`
+WHERE `sensors_parameters`.`id` = `sensors`.`id`
 ";
 
 if ($location && $type)
-	$sql .= "AND `sensors`.`location`='$location' AND `parameters`.`type`= '$type'\n";
+	$sql .= "AND `sensors`.`location`='$location' AND `sensors_parameters`.`type`= '$type'\n";
 elseif ($location && !$type)
 	$sql .= "AND `sensors`.`location`='$location'\n";
 elseif (!$location && $type)
-	$sql .= "AND `parameters`.`type`='$type'\n";
-$sql .= "ORDER BY `parameters`.`id` ASC, `parameters`.`param` ASC";
+	$sql .= "AND `sensors_parameters`.`type`='$type'\n";
+$sql .= "ORDER BY `sensors_parameters`.`id` ASC, `sensors_parameters`.`param` ASC";
 
 $result = mysqli_query($link, $sql) or die('Error ' .mysqli_error($link));
 $rows = array();

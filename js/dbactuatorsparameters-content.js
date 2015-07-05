@@ -107,7 +107,7 @@ HomeWSN.Content = (function() {
 		}
 
 		$.fn.editable.defaults.mode = 'popup';
-		$.fn.editable.defaults.url = HomeWSN.getWebServerUrl() + 'postparameters.php';
+		$.fn.editable.defaults.url = HomeWSN.getWebServerUrl() + 'postactuatorsparameters.php';
 
 		$('.icontype-editable').editable({
 			type: 'select',
@@ -117,9 +117,9 @@ HomeWSN.Content = (function() {
 					return 'This field is required';
 			},
 			source: [
-				{value: 'ImageFile', text: 'ImageFile'},
+				{value: 'ImageFile', text: 'ImageFile'} /*,
 				{value: 'CircularGauge', text: 'CircularGauge'},
-				{value: 'LinearGauge', text: 'LinearGauge'}
+				{value: 'LinearGauge', text: 'LinearGauge'} */
 			],
 			success: function(response, newValue) {
 				var $row = $(this).parents('tr');

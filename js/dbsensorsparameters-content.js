@@ -107,7 +107,7 @@ HomeWSN.Content = (function() {
 		}
 
 		$.fn.editable.defaults.mode = 'popup';
-		$.fn.editable.defaults.url = HomeWSN.getWebServerUrl() + 'postparameters.php';
+		$.fn.editable.defaults.url = HomeWSN.getWebServerUrl() + 'postsensorsparameters.php';
 
 		$('.icontype-editable').editable({
 			type: 'select',

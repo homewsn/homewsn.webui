@@ -43,9 +43,9 @@ if (!$link)
 	return httpStatus(400, 'MySQL error: ' .mysqli_error($link));
 
 $sql = "
-UPDATE `parameters`
-SET `parameters`.`$name`='$value'
-WHERE `parameters`.`id`=$id AND `parameters`.`param`=$param
+UPDATE `actuators_parameters`
+SET `actuators_parameters`.`$name`='$value'
+WHERE `actuators_parameters`.`id`=$id AND `actuators_parameters`.`param`=$param
 ";
 
 $result = mysqli_query($link, $sql);

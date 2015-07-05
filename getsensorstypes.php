@@ -4,10 +4,10 @@ include('mysql.inc');
 $link = mysqli_connect($host, $user, $pass, $db) or die('Error ' .mysqli_error($link));
 
 $sql = "
-SELECT `parameters`.`type`
-FROM `parameters`, `sensors`
-WHERE (`parameters`.`type`!= '' AND `parameters`.`id` = `sensors`.`id`)
-GROUP BY `parameters`.`type` ASC
+SELECT `sensors_parameters`.`type`
+FROM `sensors_parameters`, `sensors`
+WHERE (`sensors_parameters`.`type`!= '' AND `sensors_parameters`.`id` = `sensors`.`id`)
+GROUP BY `sensors_parameters`.`type` ASC
 ";
 
 $result = mysqli_query($link, $sql) or die('Error ' .mysqli_error($link));
