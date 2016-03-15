@@ -140,7 +140,7 @@ $result = mysqli_query($link, $sql) or die('Error: ' .mysqli_error($link));
 $last = array();
 $row = mysqli_fetch_assoc($result);
 extract($row);
-if ($value_avg)
+if (!isempty($value_avg))
 {
 	// add the last record if it exists
 	$last[] = "[$datetime, $value_avg]";
