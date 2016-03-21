@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015 Vladimir Alemasov
+* Copyright (c) 2015,2016 Vladimir Alemasov
 * All rights reserved
 *
 * This program and the accompanying materials are distributed under 
@@ -51,9 +51,15 @@ HomeWSN.Actuators = (function() {
 				// image file
 				actuators[cnt].$cell = $('<div/>').attr('class', 'img-center-cell');
 				actuators[cnt].$img = $('<img/>').attr('src', actuators[cnt].icon_url_na);
+				// search string like "on(0)-off(1)" or "on(1)-off(0)"
+				actuators[cnt].reverse_on = false;
+				if (actuators[cnt].unit.search(/on\(0\)/) != -1) {
+					actuators[cnt].reverse_on = true;
+				}
 			}
 			else {
-				// what esle?
+				// doesn't supported
+				continue;
 			}
 			actuators[cnt].$cell.data('sn', cnt);
 			actuators[cnt].$cell.append(actuators[cnt].$img);
@@ -92,7 +98,10 @@ HomeWSN.Actuators = (function() {
 			var sn = $(event.target).data('sn');
 			actuators[sn].$input.bootstrapSwitch('readonly', true);
 			actuators[sn].$input.bootstrapSwitch('indeterminate', true);
-			var command = state ? '1' : '0';
+			if (actuators[sn].reverse_on === false)
+				var command = state ? '1' : '0';
+			else
+				var command = state ? '0' : '1';
 			HomeWSN.Content.mqttPublish(actuators[sn].id, actuators[sn].param, command);
 		});
 
@@ -114,30 +123,61 @@ HomeWSN.Actuators = (function() {
 		if (parts.length !== 0 && main_topic === 'actuators') {
 			var id = parts.shift();
 			if (parts.length === 0) {
-				// what here? see sensors.js
+
+				for (var cnt = 0; cnt < actuators.length; cnt++) {
+					if (actuators[cnt].id == id) {
+						// online / offline
+						if (actuators[cnt].icon_type === 'ImageFile') {
+							if (payload === 'offline') {
+								actuators[cnt].$img.attr('src', actuators[cnt].icon_url_na);
+								actuators[cnt].$input.bootstrapSwitch('readonly', true);
+								actuators[cnt].$input.bootstrapSwitch('indeterminate', true);
+								actuators[cnt].status = 'offline';
+							}
+							if (payload === 'online') {
+								actuators[cnt].status = 'online';
+							}
+						}
+						else {
+							// doesn't supported
+						}
+					}
+				}
+
 			}
 			else {
 				var param = parts.shift();
 				for (var cnt = 0; cnt < actuators.length; cnt++) {
 					if (actuators[cnt].id == id && actuators[cnt].param == param) {
-						actuators[cnt].status = 'online';
 						if (parts.length === 0) {
 							// param
-							if (actuators[cnt].icon_type === 'ImageFile') {
+							if (actuators[cnt].icon_type === 'ImageFile' && actuators[cnt].status === 'online') {
 								actuators[cnt].$input.bootstrapSwitch('readonly', false);
 								actuators[cnt].$input.bootstrapSwitch('indeterminate', false);
 								if (payload == '0') {
-									actuators[cnt].$img.attr('src', actuators[cnt].icon_url_0);
-									actuators[cnt].$input.bootstrapSwitch('state', false, 'false');
+									if (actuators[cnt].reverse_on === false) {
+										actuators[cnt].$img.attr('src', actuators[cnt].icon_url_0);
+										actuators[cnt].$input.bootstrapSwitch('state', false, 'false');
+									}
+									else {
+										actuators[cnt].$img.attr('src', actuators[cnt].icon_url_1);
+										actuators[cnt].$input.bootstrapSwitch('state', true, 'false');
+									}
 								}
 								else if (payload == '1') {
-									actuators[cnt].$img.attr('src', actuators[cnt].icon_url_1);
-									actuators[cnt].$input.bootstrapSwitch('state', true, 'false');
+									if (actuators[cnt].reverse_on === false) {
+										actuators[cnt].$img.attr('src', actuators[cnt].icon_url_1);
+										actuators[cnt].$input.bootstrapSwitch('state', true, 'false');
+									}
+									else {
+										actuators[cnt].$img.attr('src', actuators[cnt].icon_url_0);
+										actuators[cnt].$input.bootstrapSwitch('state', false, 'false');
+									}
 								}
 								break;
 							}
 							else {
-								// what else?
+								// doesn't supported
 							}
 						}
 					}
@@ -150,7 +190,11 @@ HomeWSN.Actuators = (function() {
 	function newChart(sn) {
 		var url = HomeWSN.getWebServerUrl() + 'getchartdata.php?id=' + actuators[sn].id + '&param=' + actuators[sn].param + '&data_type=' + actuators[sn].data_type;
 		var chart;
+		var step = false;
 
+		if (actuators[sn].icon_type === 'ImageFile') {
+			step = true;
+		}
 		$.getJSON(url, function(data) {
 			chart = new Highcharts.StockChart({
 				chart: {
@@ -212,6 +256,7 @@ HomeWSN.Actuators = (function() {
 				},
 				series:	[{
 					data: data,
+					step: step,
 					dataGrouping: {
 						enabled: false
 					}

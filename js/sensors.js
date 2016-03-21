@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015 Vladimir Alemasov
+* Copyright (c) 2015,2016 Vladimir Alemasov
 * All rights reserved
 *
 * This program and the accompanying materials are distributed under 
@@ -55,6 +55,10 @@ HomeWSN.Sensors = (function() {
 			else if (sensors[cnt].icon_type === 'CircularGauge' || sensors[cnt].icon_type === 'LinearGauge') {
 				sensors[cnt].$cell = $('<div/>').attr('class', 'gauge-center-cell');
 				sensors[cnt].$img = $('<div/>').attr({ class: 'gauge-placeholder', id: 'gauge' + cnt });
+			}
+			else {
+				// doesn't supported
+				continue;
 			}
 			sensors[cnt].$cell.data('sn', cnt);
 			sensors[cnt].$cell.append(sensors[cnt].$img);
@@ -139,12 +143,18 @@ HomeWSN.Sensors = (function() {
 								sensors[cnt].$message.text(payload);
 								sensors[cnt].status = 'offline';
 							}
+							if (payload === 'online') {
+								sensors[cnt].status = 'online';
+							}
 						}
 						else if (sensors[cnt].icon_type === 'CircularGauge' || sensors[cnt].icon_type === 'LinearGauge') {
 							if (payload === 'offline') {
 								sensors[cnt].gauge.refresh(null);
 								sensors[cnt].$message.text(payload);
 								sensors[cnt].status = 'offline';
+							}
+							if (payload === 'online') {
+								sensors[cnt].status = 'online';
 							}
 						}
 					}
@@ -154,10 +164,9 @@ HomeWSN.Sensors = (function() {
 				var param = parts.shift();
 				for (var cnt = 0; cnt < sensors.length; cnt++) {
 					if (sensors[cnt].id == id && sensors[cnt].param == param) {
-						sensors[cnt].status = 'online';
 						if (parts.length === 0) {
 							// param
-							if (sensors[cnt].icon_type === 'ImageFile') {
+							if (sensors[cnt].icon_type === 'ImageFile' && sensors[cnt].status === 'online') {
 								if (payload == '0') {
 									sensors[cnt].$img.attr('src', sensors[cnt].icon_url_0);
 									sensors[cnt].$message.text(sensors[cnt].value_0);
@@ -168,7 +177,7 @@ HomeWSN.Sensors = (function() {
 								}
 								break;
 							}
-							else if (sensors[cnt].icon_type === 'CircularGauge' || sensors[cnt].icon_type === 'LinearGauge') {
+							else if ((sensors[cnt].icon_type === 'CircularGauge' || sensors[cnt].icon_type === 'LinearGauge') && sensors[cnt].status === 'online') {
 								sensors[cnt].$message.text(payload + ' ' + sensors[cnt].unit);
 								sensors[cnt].gauge.refresh(payload);
 								break;
@@ -184,7 +193,11 @@ HomeWSN.Sensors = (function() {
 	function newChart(sn) {
 		var url = HomeWSN.getWebServerUrl() + 'getchartdata.php?id=' + sensors[sn].id + '&param=' + sensors[sn].param + '&data_type=' + sensors[sn].data_type;
 		var chart;
+		var step = false;
 
+		if (sensors[sn].icon_type === 'ImageFile') {
+			step = true;
+		}
 		$.getJSON(url, function(data) {
 			chart = new Highcharts.StockChart({
 				chart: {
@@ -246,6 +259,7 @@ HomeWSN.Sensors = (function() {
 				},
 				series:	[{
 					data: data,
+					step: step,
 					dataGrouping: {
 						enabled: false
 					}
