@@ -692,12 +692,22 @@ HomeWSN.Editor.Flowchart = (function() {
 	//-----------------------------------------------------------
 	// load rules
 	function loadRules(strRules) {
-		var objRules = JSON.parse(strRules);
-		var version = objRules['version'];
-		var arrBlocks = objRules['nodes'];
+		var objRules;
+		var version;
+		var arrBlocks;
 
 		jsPlumb.deleteEveryEndpoint();
 		$(".jsplumb-block").remove();
+
+		try {
+			objRules = JSON.parse(strRules);
+		}
+		catch (error) {
+			return;
+		}
+
+		version = objRules['version'];
+		arrBlocks = objRules['nodes'];
 
 		for (var cnt = 0; cnt < arrBlocks.length; cnt++) {
 
