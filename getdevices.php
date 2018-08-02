@@ -1,6 +1,6 @@
 <?php
 /*
-* Copyright (c) 2015, 2018 Vladimir Alemasov
+* Copyright (c) 2018 Vladimir Alemasov
 * All rights reserved
 *
 * This program and the accompanying materials are distributed under 
@@ -18,10 +18,9 @@ include('mysql.inc');
 $link = mysqli_connect($host, $user, $pass, $db) or die('Error ' .mysqli_error($link));
 
 $sql = "
-SELECT `parameters`.`id`, `parameters`.`param`, `parameters`.`type`, `parameters`.`comment`, `devices`.`location`
-FROM `parameters`, `devices`
-WHERE `parameters`.`id` = `devices`.`id` AND `parameters`.`param_type`='sensor'
-ORDER BY `parameters`.`id` ASC, `parameters`.`param` ASC
+SELECT `devices`.`id`, `devices`.`ip`, `devices`.`location`
+FROM `devices`
+ORDER BY `devices`.`id` ASC
 ";
 
 $result = mysqli_query($link, $sql) or die('Error ' .mysqli_error($link));
@@ -29,10 +28,7 @@ $rows = array();
 while ($row = mysqli_fetch_assoc($result))
 {
 	extract($row);
-	if ($comment)
-		$rows[] = '{"topic": "sensors/' ."$id/$param" .'", "desc": "' ."$location $type $comment" .'"}';
-	else
-		$rows[] = '{"topic": "sensors/' ."$id/$param" .'", "desc": "' ."$location $type" .'"}';
+	$rows[] = "{ \"id\": \"$id\", \"ip\": \"$ip\", \"location\": \"$location\"}";
 }
 
 // output to the browser

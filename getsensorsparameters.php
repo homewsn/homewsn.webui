@@ -1,4 +1,18 @@
 <?php
+/*
+* Copyright (c) 2015, 2018 Vladimir Alemasov
+* All rights reserved
+*
+* This program and the accompanying materials are distributed under 
+* the terms of GNU General Public License version 2 
+* as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
+
 // parameters from URL
 $location = $_GET['location'];
 $type = $_GET['type'];
@@ -8,18 +22,18 @@ include('mysql.inc');
 $link = mysqli_connect($host, $user, $pass, $db) or die('Error ' .mysqli_error($link));
 
 $sql = "
-SELECT `sensors_parameters`.`id`, `sensors_parameters`.`param`, `sensors_parameters`.`unit`, `sensors_parameters`.`data_type`, `sensors_parameters`.`icon_type`, `sensors_parameters`.`icon_url_na`, `sensors_parameters`.`icon_url_0`, `sensors_parameters`.`icon_url_1`, `sensors_parameters`.`value_0`, `sensors_parameters`.`value_1`, `sensors_parameters`.`type`, `sensors_parameters`.`comment`, `sensors`.`location`
-FROM `sensors_parameters`, `sensors`
-WHERE `sensors_parameters`.`id` = `sensors`.`id`
+SELECT `parameters`.`id`, `parameters`.`param`, `parameters`.`unit`, `parameters`.`data_type`, `parameters`.`icon_type`, `parameters`.`icon_url_na`, `parameters`.`icon_url_0`, `parameters`.`icon_url_1`, `parameters`.`value_0`, `parameters`.`value_1`, `parameters`.`type`, `parameters`.`comment`, `devices`.`location`
+FROM `parameters`, `devices`
+WHERE `parameters`.`id` = `devices`.`id` AND `parameters`.`param_type`='sensor'
 ";
 
 if ($location && $type)
-	$sql .= "AND `sensors`.`location`='$location' AND `sensors_parameters`.`type`= '$type'\n";
+	$sql .= "AND `devices`.`location`='$location' AND `parameters`.`type`= '$type'\n";
 elseif ($location && !$type)
-	$sql .= "AND `sensors`.`location`='$location'\n";
+	$sql .= "AND `devices`.`location`='$location'\n";
 elseif (!$location && $type)
-	$sql .= "AND `sensors_parameters`.`type`='$type'\n";
-$sql .= "ORDER BY `sensors_parameters`.`id` ASC, `sensors_parameters`.`param` ASC";
+	$sql .= "AND `parameters`.`type`='$type'\n";
+$sql .= "ORDER BY `parameters`.`id` ASC, `parameters`.`param` ASC";
 
 $result = mysqli_query($link, $sql) or die('Error ' .mysqli_error($link));
 $rows = array();

@@ -1,6 +1,6 @@
 <?php
 /*
-* Copyright (c) 2015, 2018 Vladimir Alemasov
+* Copyright (c) 2018 Vladimir Alemasov
 * All rights reserved
 *
 * This program and the accompanying materials are distributed under 
@@ -22,9 +22,9 @@ include('mysql.inc');
 $link = mysqli_connect($host, $user, $pass, $db) or die('Error ' .mysqli_error($link));
 
 $sql = "
-SELECT `parameters`.`id`, `parameters`.`param`, `parameters`.`unit`, `parameters`.`data_type`, `parameters`.`icon_type`, `parameters`.`icon_url_na`, `parameters`.`icon_url_0`, `parameters`.`icon_url_1`, `parameters`.`value_0`, `parameters`.`value_1`, `parameters`.`type`, `parameters`.`comment`, `devices`.`location`
+SELECT `parameters`.`id`, `parameters`.`param`, `parameters`.`param_type`, `parameters`.`unit`, `parameters`.`data_type`, `parameters`.`icon_type`, `parameters`.`icon_url_na`, `parameters`.`icon_url_0`, `parameters`.`icon_url_1`, `parameters`.`value_0`, `parameters`.`value_1`, `parameters`.`type`, `parameters`.`comment`, `devices`.`location`
 FROM `parameters`, `devices`
-WHERE `parameters`.`id`=`devices`.`id` AND `parameters`.`param_type`='actuator'
+WHERE `parameters`.`id`=`devices`.`id`
 ";
 
 if ($location && $type)
@@ -40,7 +40,7 @@ $rows = array();
 while ($row = mysqli_fetch_assoc($result))
 {
 	extract($row);
-	$rows[] = "{\"id\": \"$id\", \"param\": \"$param\", \"unit\": \"$unit\", \"data_type\": \"$data_type\", \"icon_type\": \"$icon_type\", \"icon_url_na\": \"$icon_url_na\", \"icon_url_0\": \"$icon_url_0\", \"icon_url_1\": \"$icon_url_1\", \"value_0\": \"$value_0\", \"value_1\": \"$value_1\", \"location\": \"$location\", \"type\": \"$type\", \"comment\": \"$comment\"}";
+	$rows[] = "{\"id\": \"$id\", \"param\": \"$param\", \"param_type\": \"$param_type\", \"unit\": \"$unit\", \"data_type\": \"$data_type\", \"icon_type\": \"$icon_type\", \"icon_url_na\": \"$icon_url_na\", \"icon_url_0\": \"$icon_url_0\", \"icon_url_1\": \"$icon_url_1\", \"value_0\": \"$value_0\", \"value_1\": \"$value_1\", \"location\": \"$location\", \"type\": \"$type\", \"comment\": \"$comment\"}";
 }
 
 // output to the browser

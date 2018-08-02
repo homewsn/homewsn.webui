@@ -1,4 +1,18 @@
 <?php
+/*
+* Copyright (c) 2018 Vladimir Alemasov
+* All rights reserved
+*
+* This program and the accompanying materials are distributed under 
+* the terms of GNU General Public License version 2 
+* as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
+
 // http://stackoverflow.com/questions/3258634/php-how-to-send-http-response-code
 function httpStatus($httpStatusCode, $httpStatusMsg)
 {
@@ -32,9 +46,9 @@ if (!$link)
 	return httpStatus(400, 'Error: ' .mysqli_error($link));
 
 $sql = "
-UPDATE `actuators`
-SET `actuators`.`$name`='$value'
-WHERE `actuators`.`id`='$pk'
+UPDATE `devices`
+SET `devices`.`$name`='$value'
+WHERE `devices`.`id`='$pk'
 ";
 
 $result = mysqli_query($link, $sql);

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015,2016 Vladimir Alemasov
+* Copyright (c) 2015, 2016, 2018 Vladimir Alemasov
 * All rights reserved
 *
 * This program and the accompanying materials are distributed under 
@@ -120,7 +120,7 @@ HomeWSN.Actuators = (function() {
 			return;
 		var parts = topic.split('/');
 		var main_topic = parts.shift();
-		if (parts.length !== 0 && main_topic === 'actuators') {
+		if (parts.length !== 0 && main_topic === 'devices') {
 			var id = parts.shift();
 			if (parts.length === 0) {
 
@@ -145,7 +145,10 @@ HomeWSN.Actuators = (function() {
 				}
 
 			}
-			else {
+		}
+		if (parts.length !== 0 && main_topic === 'actuators') {
+			var id = parts.shift();
+			if (parts.length !== 0) {
 				var param = parts.shift();
 				for (var cnt = 0; cnt < actuators.length; cnt++) {
 					if (actuators[cnt].id == id && actuators[cnt].param == param) {
@@ -177,7 +180,7 @@ HomeWSN.Actuators = (function() {
 								break;
 							}
 							else {
-								// doesn't supported
+								// it's not supported yet
 							}
 						}
 					}

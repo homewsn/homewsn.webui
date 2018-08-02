@@ -1,13 +1,27 @@
 <?php
+/*
+* Copyright (c) 2015, 2018 Vladimir Alemasov
+* All rights reserved
+*
+* This program and the accompanying materials are distributed under 
+* the terms of GNU General Public License version 2 
+* as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*/
+
 // connect to the database
 include('mysql.inc');
 $link = mysqli_connect($host, $user, $pass, $db) or die('Error ' .mysqli_error($link));
 
 $sql = "
-SELECT `actuators`.`location`
-FROM `actuators`
-WHERE `actuators`.`location`!=''
-GROUP BY `actuators`.`location` ASC
+SELECT `devices`.`location`
+FROM `parameters`, `devices`
+WHERE `devices`.`location`!='' AND `parameters`.`id`=`devices`.`id` AND `parameters`.`param_type`='actuator'
+GROUP BY `devices`.`location` ASC
 ";
 
 $result = mysqli_query($link, $sql) or die('Error ' .mysqli_error($link));

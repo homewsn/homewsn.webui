@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015 Vladimir Alemasov
+* Copyright (c) 2015, 2018 Vladimir Alemasov
 * All rights reserved
 *
 * This program and the accompanying materials are distributed under 
@@ -15,7 +15,7 @@
 HomeWSN.Content = (function() {
 	"use strict";
 
-	var ACTUATORSTOPIC = 'actuators/+';
+	var DEVICESTOPIC = 'devices/+';
 	var ACTUATORSPARAMETERSTOPIC = 'actuators/+/+';
 
 	//-----------------------------------------------------------
@@ -100,14 +100,14 @@ HomeWSN.Content = (function() {
 	//-----------------------------------------------------------
 	function mqttSubscribe() {
 		if (HomeWSN.Mqtt.isConnected() === true) {
-			HomeWSN.Mqtt.subscribe(ACTUATORSTOPIC, {qos: 1});
+			HomeWSN.Mqtt.subscribe(DEVICESTOPIC, {qos: 1});
 			HomeWSN.Mqtt.subscribe(ACTUATORSPARAMETERSTOPIC, {qos: 1});
 		}
 	};
 
 	function mqttUnsubscribe() {
 		if (HomeWSN.Mqtt.isConnected() === true) {
-			HomeWSN.Mqtt.unsubscribe(ACTUATORSTOPIC, {qos: 1});
+			HomeWSN.Mqtt.unsubscribe(DEVICESTOPIC, {qos: 1});
 			HomeWSN.Mqtt.unsubscribe(ACTUATORSPARAMETERSTOPIC, {qos: 1});
 		}
 	};

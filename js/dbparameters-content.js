@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015 Vladimir Alemasov
+* Copyright (c) 2018 Vladimir Alemasov
 * All rights reserved
 *
 * This program and the accompanying materials are distributed under 
@@ -17,17 +17,17 @@ HomeWSN.Content = (function() {
 
 	//-----------------------------------------------------------
 	function init() {
-		var sensors;
-		$.getScript(HomeWSN.getWebServerUrl() + 'getsensorsparameters.php', function(script, textStatus, jqXHR) {
-			sensors = JSON.parse(script);
-			createTable(sensors);
+		var devices;
+		$.getScript(HomeWSN.getWebServerUrl() + 'getdevicesparameters.php', function(script, textStatus, jqXHR) {
+			devices = JSON.parse(script);
+			createTable(devices);
 		});
 	};
 
 	//-----------------------------------------------------------
-	function createTable(sensors) {
+	function createTable(devices) {
 		var colSet = [];
-		var rowHash = sensors[0];
+		var rowHash = devices[0];
 		var $headerTr = $('<tr/>');
 		var $table = $('#edittable');
 
@@ -35,7 +35,9 @@ HomeWSN.Content = (function() {
 		{
 			colSet.push(key);
 			if (key == 'id')
-				$headerTr.append($('<th/>').text('Sensor #'));
+				$headerTr.append($('<th/>').text('Device #'));
+			else if (key == 'param_type')
+				$headerTr.append($('<th/>').text('Type'));
 			else if (key == 'param')
 				$headerTr.append($('<th/>').text('Param #'));
 			else if (key == 'unit')
@@ -57,7 +59,7 @@ HomeWSN.Content = (function() {
 			else if (key == 'location')
 				$headerTr.append($('<th/>').text('Location'));
 			else if (key == 'type')
-				$headerTr.append($('<th/>').text('Type'));
+				$headerTr.append($('<th/>').text('Group'));
 			else if (key == 'comment')
 				$headerTr.append($('<th/>').text('Comment'));
 			else
@@ -65,14 +67,14 @@ HomeWSN.Content = (function() {
 		}
 		$table.append($headerTr);
 
-		for (var rowIndex = 0 ; rowIndex < sensors.length ; rowIndex++)
+		for (var rowIndex = 0 ; rowIndex < devices.length ; rowIndex++)
 		{
 			var $row = $('<tr/>');
 			for (var colIndex = 0 ; colIndex < colSet.length ; colIndex++)
 			{
 				var headerValue = colSet[colIndex];
-				var cellValue = sensors[rowIndex][headerValue];
-				var pk = sensors[rowIndex]['id'] + '-' + sensors[rowIndex]['param'];
+				var cellValue = devices[rowIndex][headerValue];
+				var pk = devices[rowIndex]['id'] + '-' + devices[rowIndex]['param'];
 				if (headerValue == 'icon_type')
 					$row.append($('<td/>').html('<a href="#" class="icontype-editable" data-name="icon_type" data-value="' + cellValue + '" data-pk="' + pk + '">' + cellValue + '</a>'));
 				else if (headerValue == 'icon_url_na')
@@ -88,7 +90,7 @@ HomeWSN.Content = (function() {
 				else if (headerValue == 'type')
 					$row.append($('<td/>').html('<a href="#" class="type-editable" data-name="type" data-pk="' + pk + '">' + cellValue + '</a>'));
 				else if (headerValue == 'comment')
-					$row.append($('<td/>').html('<a href="#" class="nonval-editable" data-title="Enter additional name of measured parameter:" data-name="comment" data-pk="' + pk + '">' + cellValue + '</a>'));
+					$row.append($('<td/>').html('<a href="#" class="nonval-editable" data-title="Enter additional name of the device:" data-name="comment" data-pk="' + pk + '">' + cellValue + '</a>'));
 				else
 					$row.append($('<td/>').text(cellValue));
 			}
@@ -107,7 +109,7 @@ HomeWSN.Content = (function() {
 		}
 
 		$.fn.editable.defaults.mode = 'popup';
-		$.fn.editable.defaults.url = HomeWSN.getWebServerUrl() + 'postsensorsparameters.php';
+		$.fn.editable.defaults.url = HomeWSN.getWebServerUrl() + 'postdevicesparameters.php';
 
 		$('.icontype-editable').editable({
 			type: 'select',
@@ -117,7 +119,7 @@ HomeWSN.Content = (function() {
 					return 'This field is required';
 			},
 			source: [
-				{value: 'ImageFile', text: 'ImageFile'},
+				{value: 'ImageFile', text: 'ImageFile'} ,
 				{value: 'CircularGauge', text: 'CircularGauge'},
 				{value: 'LinearGauge', text: 'LinearGauge'}
 			],
@@ -150,7 +152,7 @@ HomeWSN.Content = (function() {
 
 		$('.type-editable').editable({
 			type: 'text',
-			title: 'Enter type of measured parameter:',
+			title: 'Enter type of the device:',
 			validate: function(value) {
 				if ($.trim(value) == '')
 					return 'This field is required';

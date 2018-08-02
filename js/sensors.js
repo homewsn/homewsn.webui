@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015,2016 Vladimir Alemasov
+* Copyright (c) 2015, 2016, 2018 Vladimir Alemasov
 * All rights reserved
 *
 * This program and the accompanying materials are distributed under 
@@ -131,7 +131,7 @@ HomeWSN.Sensors = (function() {
 			return;
 		var parts = topic.split('/');
 		var main_topic = parts.shift();
-		if (parts.length !== 0 && main_topic === 'sensors') {
+		if (parts.length !== 0 && main_topic === 'devices') {
 			var id = parts.shift();
 			if (parts.length === 0) {
 				for (var cnt = 0; cnt < sensors.length; cnt++) {
@@ -160,7 +160,10 @@ HomeWSN.Sensors = (function() {
 					}
 				}
 			}
-			else {
+		}
+		if (parts.length !== 0 && main_topic === 'sensors') {
+			var id = parts.shift();
+			if (parts.length !== 0) {
 				var param = parts.shift();
 				for (var cnt = 0; cnt < sensors.length; cnt++) {
 					if (sensors[cnt].id == id && sensors[cnt].param == param) {

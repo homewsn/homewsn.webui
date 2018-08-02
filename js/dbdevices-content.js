@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015 Vladimir Alemasov
+* Copyright (c) 2015, 2018 Vladimir Alemasov
 * All rights reserved
 *
 * This program and the accompanying materials are distributed under 
@@ -17,17 +17,17 @@ HomeWSN.Content = (function() {
 
 	//-----------------------------------------------------------
 	function init() {
-		var sensors;
-		$.getScript(HomeWSN.getWebServerUrl() + 'getsensors.php', function(script, textStatus, jqXHR) {
-			sensors = JSON.parse(script);
-			createTableSensors(sensors);
+		var devices;
+		$.getScript(HomeWSN.getWebServerUrl() + 'getdevices.php', function(script, textStatus, jqXHR) {
+			devices = JSON.parse(script);
+			createTableSensors(devices);
 		});
 	};
 
 	//-----------------------------------------------------------
-	function createTableSensors(sensors) {
+	function createTableSensors(devices) {
 		var colSet = [];
-		var rowHash = sensors[0];
+		var rowHash = devices[0];
 		var $headerTr = $('<tr/>');
 		var $table = $('#edittable');
 
@@ -35,9 +35,9 @@ HomeWSN.Content = (function() {
 		{
 			colSet.push(key);
 			if (key == 'id')
-				$headerTr.append($('<th/>').text('Sensor #'));
+				$headerTr.append($('<th/>').text('Device #'));
 			else if (key == 'ip')
-				$headerTr.append($('<th/>').text('Sensor IP'));
+				$headerTr.append($('<th/>').text('Device IP address'));
 			else if (key == 'location')
 				$headerTr.append($('<th/>').text('Location'));
 			else
@@ -45,14 +45,14 @@ HomeWSN.Content = (function() {
 		}
 		$table.append($headerTr);
 
-		for (var rowIndex = 0 ; rowIndex < sensors.length ; rowIndex++)
+		for (var rowIndex = 0 ; rowIndex < devices.length ; rowIndex++)
 		{
 			var $row = $('<tr/>');
 			for (var colIndex = 0 ; colIndex < colSet.length ; colIndex++)
 			{
 				var headerValue = colSet[colIndex];
-				var cellValue = sensors[rowIndex][headerValue];
-				var pk = sensors[rowIndex]['id'];
+				var cellValue = devices[rowIndex][headerValue];
+				var pk = devices[rowIndex]['id'];
 				if (headerValue == 'location')
 					$row.append($('<td/>').html('<a href="#" class="location-editable" data-name="location" data-pk="' + pk + '">' + cellValue + '</a>'));
 				else
@@ -65,7 +65,7 @@ HomeWSN.Content = (function() {
 
 		$('.location-editable').editable({
 			type: 'text',
-			url: HomeWSN.getWebServerUrl() + 'postsensors.php',
+			url: HomeWSN.getWebServerUrl() + 'postdevices.php',
 			title: 'Enter location:',
 			validate: function(value) {
 				if ($.trim(value) == '')
